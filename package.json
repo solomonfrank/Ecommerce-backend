@@ -1,0 +1,50 @@
+{
+  "name": "ecommerce-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "nodemon --exec babel-node ./src/index.js",
+    "start": "node dist",
+    "build": "rm -rf dist/ && babel src/ -d dist/",
+    "debug": "ndb ./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/solomonfrank/Ecommerce-backend.git"
+  },
+  "author": "solomon frank",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/solomonfrank/Ecommerce-backend/issues"
+  },
+  "homepage": "https://github.com/solomonfrank/Ecommerce-backend#readme",
+  "dependencies": {
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.2",
+    "@babel/node": "^7.7.0",
+    "@babel/plugin-proposal-class-properties": "^7.7.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
+    "@babel/preset-env": "^7.7.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.7.11",
+    "morgan": "^1.9.1",
+    "ndb": "^1.1.5",
+    "nodemon": "^1.19.4"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.6.2",
+    "eslint": "^6.6.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-node": "^4.0.0",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-react": "^7.16.0",
+    "prettier": "^1.19.1"
+  }
+}
