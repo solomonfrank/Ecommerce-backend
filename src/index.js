@@ -2,12 +2,14 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
-import getOrders from './controllers/orderController';
+import apiRouter from './routes';
 import AppError from './helpers/errorHandler';
 import {
   sendErrorDev,
   sendErrorProd,
-  handleCastErrorDb
+  handleCastErrorDb,
+  handleDuplicateErr,
+  handleDbValidationErr
 } from './helpers/responseHandler';
 
 dotenv.config();
@@ -37,7 +39,8 @@ mongoose
 
 app.use(morgan('dev'));
 
-app.route('/api/v1/order').get(getOrders);
+// app.route('/api/v1/order').get(getOrders);
+app.use(apiRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError('Routes does not exist on the error', 404));
@@ -55,6 +58,8 @@ app.use((err, req, res, next) => {
   if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
     if (error.name === 'CastError') error = handleCastErrorDb(err);
+    if (error.code === 11000) error = handleDuplicateErr(err);
+    if (error.name === 'ValidationError') error = handleDbValidationErr(err);
     sendErrorProd(error, res);
   }
 });

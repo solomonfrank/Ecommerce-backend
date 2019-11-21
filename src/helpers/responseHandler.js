@@ -33,3 +33,9 @@ export const handleDbValidationErr = err => {
   const message = `invlaid input data ${errors.join('. ')}`;
   return new AppError(message, 400);
 };
+
+export const handleDuplicateErr = err => {
+  const value = err.errmsg.match(/(["'])(?:(?=(\\?))\2.)*?\1/)[0];
+  const message = `input already ${value} exist`;
+  return new AppError(message, 400);
+};

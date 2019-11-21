@@ -1,4 +1,5 @@
 import orderModel from '../model/orderModel';
+import catchAsync from '../helpers/catchAsync';
 
 const getOrders = async (req, res) => {
   let queryStr = { ...req.query };
@@ -47,12 +48,6 @@ const getOrders = async (req, res) => {
 
   // const order = await query;
   console.log(query);
-};
-
-const catchAsync = fn => {
-  return (req, res, next) => {
-    fn(req, res, next).catch(next);
-  };
 };
 
 export const createOrder = catchAsync(async (req, res, next) => {
