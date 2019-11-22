@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
 import apiRouter from './routes';
 import AppError from './helpers/errorHandler';
 import {
@@ -39,8 +40,13 @@ mongoose
   })
   .then(() => console.log('db successfully connected'));
 
+const rateLimiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'too many request for this IP'
+});
 app.use(morgan('dev'));
-
+app.use('/api', rateLimiter);
 // app.route('/api/v1/order').get(getOrders);
 app.use(apiRouter);
 
