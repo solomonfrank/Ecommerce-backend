@@ -76,3 +76,12 @@ export const protect = catchAsync(async (req, res, next) => {
   req.user = user;
   next();
 });
+
+export const restrict = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(new AppError('you dont have permission to this route', 403));
+    }
+    next();
+  };
+};

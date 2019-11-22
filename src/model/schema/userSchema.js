@@ -39,6 +39,12 @@ const userSchema = new mongoose.Schema({
       message: 'password does not match'
     }
   },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  },
+
   createdAt: {
     type: Date,
     default: Date.now()
