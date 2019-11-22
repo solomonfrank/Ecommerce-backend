@@ -8,7 +8,7 @@ import AppError from '../helpers/errorHandler';
 
 dotenv.config();
 
-const { JWT_SECRET, JWT_EXPIRES_IN } = process.env;
+const { JWT_SECRET, JWT_EXPIRES_IN, JWT_COOKIE_EXPIRES_IN } = process.env;
 export const signupController = catchAsync(async (req, res, next) => {
   const newUser = await User.create(req.body);
   const token = await jwt.sign(
@@ -44,6 +44,13 @@ export const signinController = catchAsync(async (req, res, next) => {
     JWT_SECRET,
     { expiresIn: JWT_EXPIRES_IN }
   );
+  const cookieOption = {
+    expires: new Date(Date.now() + JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+    httpOnly: true
+  };
+  if (process.env.NODE_ENV === 'production') cookieOption.secure = true;
+
+  res.cookie('jwt', token, cookieOption);
   res.status(200).json({
     status: 'success',
     token
