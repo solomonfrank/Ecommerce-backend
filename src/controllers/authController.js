@@ -57,7 +57,7 @@ export const protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     // eslint-disable-next-line prefer-destructuring
-    token = req.headers.authorization(' ')[1];
+    token = req.headers.authorization.split(' ')[1];
   }
 
   if (!token) {
