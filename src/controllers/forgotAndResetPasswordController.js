@@ -1,8 +1,11 @@
+import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import User from '../model/userModel';
 import catchAsync from '../helpers/catchAsync';
 import AppError from '../helpers/errorHandler';
 import sendEmail from '../helpers/email';
 
+const { JWT_SECRET, JWT_EXPIRES_IN } = process.env;
 export const forgetPasswordController = catchAsync(async (req, res, next) => {
   const { email } = req.body;
   const user = await User.findOne({ email });
@@ -37,4 +40,35 @@ export const forgetPasswordController = catchAsync(async (req, res, next) => {
   }
 });
 
-export const resetPasswordController = (req, res, next) => {};
+export const resetPasswordController = catchAsync(async (req, res, next) => {
+  const hashToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+  const user = await User.findOne({
+    passwordResetToken: hashToken,
+    passwordResetExpires: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    return next(new AppError('Link has expired', 400));
+  }
+
+  user.password = req.body.password;
+  user.confrmPassword = req.body.confirmPassword;
+  user.passwordResetExpires = undefined;
+  user.passwordResetToken = undefined;
+  await user.save();
+
+  const token = await jwt.sign(
+    {
+      id: user._id
+    },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
+  );
+  res.status(200).json({
+    status: 'success',
+    token
+  });
+});

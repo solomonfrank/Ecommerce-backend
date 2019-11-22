@@ -3,6 +3,6 @@ import { resetPasswordController } from '../controllers/forgotAndResetPasswordCo
 
 const resetPasswordRouter = Router();
 
-resetPasswordRouter.patch('/reset-password', resetPasswordController);
+resetPasswordRouter.patch('/reset-password/:token', resetPasswordController);
 
 export default resetPasswordRouter;
