@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import mangoSanitize from 'express-mongo-sanitize';
+import xss from 'xss-clean'
 import helmet from 'helmet';
 import apiRouter from './routes';
 import AppError from './helpers/errorHandler';
@@ -22,6 +24,12 @@ const app = express();
 app.use(helmet())
 
 app.use(express.json({ limit: '10kb'}));
+
+// data sanitization against NoSQL injection
+app.use(mangoSanitize());
+
+// sanitize against xss
+app.use(xss());
 
 //uncaught exception
 process.on('uncaughtException', err => {
