@@ -37,7 +37,7 @@ export const signinController = catchAsync(async (req, res, next) => {
     return next(new AppError('Incorrect email or password', 401));
   }
 
-  const token = await jwt.sign(
+  const token = jwt.sign(
     {
       id: user._id
     },
