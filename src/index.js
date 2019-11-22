@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
 import apiRouter from './routes';
 import AppError from './helpers/errorHandler';
 import {
@@ -17,7 +18,10 @@ import {
 
 dotenv.config();
 const app = express();
-app.use(express.json());
+// http header
+app.use(helmet())
+
+app.use(express.json({ limit: '10kb'}));
 
 //uncaught exception
 process.on('uncaughtException', err => {
@@ -45,8 +49,12 @@ const rateLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   message: 'too many request for this IP'
 });
+
 app.use(morgan('dev'));
+
+// limit request from same ip
 app.use('/api', rateLimiter);
+
 // app.route('/api/v1/order').get(getOrders);
 app.use(apiRouter);
 
