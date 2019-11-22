@@ -39,3 +39,9 @@ export const handleDuplicateErr = err => {
   const message = `input already ${value} exist`;
   return new AppError(message, 400);
 };
+
+export const handleJWTError = () =>
+  new AppError('invalid token, please login again', 401);
+
+export const handleTokenExpired = () =>
+  new AppError('your token has expired', 401);

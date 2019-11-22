@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
     minlength: [6, 'Password must be greater than five characters'],
     required: [true, 'password is required'],
-    select: true
+    select: false
   },
   confirmPassword: {
     type: String,
@@ -42,7 +42,8 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now()
-  }
+  },
+  passwordChangedAt: Date
 });
 
 // document middleware for mongoose
@@ -52,5 +53,24 @@ userSchema.pre('save', async function(next) {
   this.confirmPassword = undefined;
   next();
 });
+
+//instance method
+userSchema.methods.correctPassword = async function(
+  newPassword,
+  storePassword
+) {
+  return await bcrypt.compare(newPassword, storePassword);
+};
+
+userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    return JWTTimestamp < changedTimestamp;
+  }
+  return false;
+};
 
 export default userSchema;

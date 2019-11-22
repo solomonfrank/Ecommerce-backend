@@ -9,7 +9,9 @@ import {
   sendErrorProd,
   handleCastErrorDb,
   handleDuplicateErr,
-  handleDbValidationErr
+  handleDbValidationErr,
+  handleJWTError,
+  handleTokenExpired
 } from './helpers/responseHandler';
 
 dotenv.config();
@@ -60,6 +62,8 @@ app.use((err, req, res, next) => {
     if (error.name === 'CastError') error = handleCastErrorDb(err);
     if (error.code === 11000) error = handleDuplicateErr(err);
     if (error.name === 'ValidationError') error = handleDbValidationErr(err);
+    if (error.name === 'JsonWebTokenError') error = handleJWTError();
+    if (error.name === 'TokenExpiredError') error = handleTokenExpired();
     sendErrorProd(error, res);
   }
 });
