@@ -17,6 +17,7 @@ export const updateUserController = catchAsync(async (req, res, next) => {
     return next(new AppError('request not allowed don this route', 400));
   }
   const filterBody = filterObj(req.body, 'email', 'name');
+  if (req.file) filterBody.photo = req.file.filename;
   const updatedUser = await User.findByIdAndUpdate(id, filterBody, {
     new: true, // to return new updated data
     runValidators: true

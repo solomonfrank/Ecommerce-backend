@@ -3,8 +3,12 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import hpp from 'hpp';
+import compression from 'compression';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import mangoSanitize from 'express-mongo-sanitize';
-import xss from 'xss-clean'
+import xss from 'xss-clean';
 import helmet from 'helmet';
 import apiRouter from './routes';
 import AppError from './helpers/errorHandler';
@@ -21,9 +25,11 @@ import {
 dotenv.config();
 const app = express();
 // http header
-app.use(helmet())
+app.use(helmet());
 
-app.use(express.json({ limit: '10kb'}));
+app.use(express.json({ limit: '10kb' }));
+
+app.use(cookieParser());
 
 // data sanitization against NoSQL injection
 app.use(mangoSanitize());
@@ -31,6 +37,15 @@ app.use(mangoSanitize());
 // sanitize against xss
 app.use(xss());
 
+// prevent parameter pollution
+app.use(
+  hpp({
+    whitelist: ['price']
+  })
+);
+
+app.use(cors());
+app.use(compression());
 //uncaught exception
 process.on('uncaughtException', err => {
   console.log(err.name, err.message);
@@ -59,6 +74,8 @@ const rateLimiter = rateLimit({
 });
 
 app.use(morgan('dev'));
+app.options('*', cors());
+
 
 // limit request from same ip
 app.use('/api', rateLimiter);
